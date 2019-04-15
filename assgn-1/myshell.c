@@ -26,27 +26,31 @@ int Redirect(char **args){
     char ** temp_args;
     temp_args =  (char **)malloc(0* sizeof(char)); // error
     
+    int file_desc;
     for(i = 0; args[i] != NULL; i++) { // no need for this, can do it within for loop in main
         //can add memory to array herem, then make it equal to args[i] until if statemtn execute, at the end i can use free
         if(!strcmp(args[i],">"))
         {
             //printf("%s\n",args[i+1]);
-            int file_desc = open(args[i+1], O_CREAT | O_RDWR , 0666  );
-            if(file_desc < 0)
+            
+            pid_t childPid;
+            childPid =fork();
+            
+            if(childPid==0)
             {
-                perror("open file error");
-                exit(1);
+                file_desc = open(args[i+1], O_CREAT | O_WRONLY , 0666  );
+                
+                close(STDOUT_FILENO);
+                dup(file_desc);//                    dup2(file_desc,1);
+                close(file_desc);
+                   execvp(temp_args[0],temp_args); // this causes the program to be terminated, fixed with fork();
+            }else
+            {
+                waitpid(childPid, (void *)0,0);
             }
-            close(STDOUT_FILENO);
-            if(dup2(file_desc,1) < 0){
-                perror("dup");
-                exit(1);
-            }
-            
-            execvp(temp_args[0],temp_args);
-            
             //At the end the file has to be closed:
-            close(file_desc);
+            
+            
         }
         temp_args =  (char **)realloc(temp_args, i+1);
         temp_args[i] = args[i];
