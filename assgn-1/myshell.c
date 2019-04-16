@@ -38,7 +38,7 @@ int Redirect(char **args){
             
             if(childPid==0)
             {
-                file_desc = open(args[i+1], O_CREAT | O_WRONLY , 0666  );
+                file_desc = open(args[i+1], O_CREAT | O_WRONLY| O_TRUNC , 0666 );
                 
                 close(STDOUT_FILENO);
                 dup(file_desc);//                    dup2(file_desc,1);
