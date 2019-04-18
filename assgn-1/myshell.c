@@ -29,6 +29,29 @@ int Redirect(char **args){
     int file_desc;
     for(i = 0; args[i] != NULL; i++) { // no need for this, can do it within for loop in main
         //can add memory to array herem, then make it equal to args[i] until if statemtn execute, at the end i can use free
+        
+        if(!strcmp(args[i],"<") )
+        {
+            
+            childPid =fork();
+            
+            if(childPid==0)
+            {
+                
+                file_desc = open(args[i+1],O_RDONLY, 0666  );
+                close(STDIN_FILENO);
+                dup(file_desc);
+                close(file_desc);
+                execvp(temp_args[0],temp_args);
+            }else
+            {
+                waitpid(childPid, (void *)0,0);
+            }
+            free(temp_args);
+            return 0;
+            
+        }
+        
         if(!strcmp(args[i],">") && !strcmp(args[i+1],">"))
         {
             
