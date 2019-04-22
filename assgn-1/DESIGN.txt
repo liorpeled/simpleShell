@@ -1,0 +1,14 @@
+Main ()
+The main function have several variables to keep track of which commands to use; for pipe and redirect, it is also important to have a value to keep track of the arguments that are being inputed in., you will need check for and exit command ant that should be the first command you check each line.
+You will need to create different if statements to check for which type of command to execute, it is important to remember that the simple commands could be accidentally called by using other functions so this is why what goes inside the if stamen is important
+
+commandArgs()
+This is a simple function that takes in the args array and check s if the second argument is not null meaning it is a command that takes in arguments.
+Yo then create a child process and, check that is is not 0 and you execute it using excp. A tip is to throw an error if execvp cannot execute the command.
+
+CommandNoArgs()
+ This is an even simple command that check if the second command is null meaning there is not arugemtns, the rest is the same as commandARGS(0
+
+redirect()
+You have several cases that you need to check, if it is input, output with overwrite or just append, have if statement to figure that out. The second thing is to parse and extract the command that comes in before the special symbol
+
