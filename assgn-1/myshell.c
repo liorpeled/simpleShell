@@ -43,12 +43,22 @@ int Piping(char **args) {
         if(!strcmp(args[i], ";"))
         {
             i++;
-            printf("Argument: ");
-            for(int k = 0; temp_args[k] != NULL; k++)
-            {
-                printf("%s ",  temp_args[k]);
+            /* printf("Argument: ");
+             for(int k = 0; temp_args[k] != NULL; k++)
+             {
+             printf("%s ",  temp_args[k]);
+             }
+             printf("\n ");*/
+            pid_t childPid;
+            childPid = fork();
+            
+            if (childPid == 0){
+                execvp(temp_args[0],temp_args);
+                printf("%s\n", "no such command exist");
+                exit(errno);
+            } else {
+                waitpid(childPid, (void *)0, 0);
             }
-            printf("\n ");
             
             for (int x = 0; temp_args[x] != NULL; x++)
             {
@@ -62,16 +72,6 @@ int Piping(char **args) {
         }
         temp_args = (char **)realloc(temp_args, j + 1);
         temp_args[j] = args[i];
-        pid_t childPid;
-        childPid = fork();
-        
-        if (childPid == 0){
-            execvp(temp_args[0],temp_args);
-            printf("%s\n", "no such command exist");
-            exit(errno);
-        } else {
-            waitpid(childPid, (void *)0, 0);
-        }
         if(args[i+1]== NULL)
         {
             printf("Argument: ");
@@ -80,12 +80,16 @@ int Piping(char **args) {
                 printf("%s ",  temp_args[k]);
             }
             printf("\n ");
-            /*for (int x = 0; temp_args[x] != NULL; x++)
-             {
-             free(temp_args[x]);
-             temp_args[x]=NULL;
-             }*/
-            //execvp(temp_args[0], temp_args);
+            pid_t childPid;
+            childPid = fork();
+            
+            if (childPid == 0){
+                execvp(temp_args[0],temp_args);
+                printf("%s\n", "no such command exist");
+                exit(errno);
+            } else {
+                waitpid(childPid, (void *)0, 0);
+            }
         }
         
         
@@ -147,10 +151,10 @@ int Redirect(char **args) {
                 waitpid(childPid, (void *)0, 0);
             }
             free(temp_args);
-            i++;
+            return 0;
         }
-        if (!strcmp(args[i], ">")&& !strcmp(args[i + 1], ">")) {
-            
+        if (!strcmp(args[i], ">")) {
+            printf("%s\n", "im here");
             childPid = fork();
             
             if (childPid == 0) {
@@ -166,6 +170,7 @@ int Redirect(char **args) {
                 waitpid(childPid, (void *)0, 0);
             }
             free(temp_args);
+            
         }
         temp_args = (char **)realloc(temp_args, i + 1);
         temp_args[i] = args[i];
@@ -221,6 +226,7 @@ int main() {
     int i;
     char **args;
     int rd;
+    int pip;
     int j=0;
     char **temp_args = (char **)malloc(0 * sizeof(char));
     while (1) {
@@ -233,6 +239,12 @@ int main() {
             
             exit(1);
         }
+        if (strcmp(args[0], "cd") == 0) {
+            
+            //printf("%s\n", args[1] );
+            chdir(args[1]);
+        }
+        
         
         
         for (i = 0; args[i] != NULL; i++) {
@@ -241,19 +253,28 @@ int main() {
             
             //printf("Argument %d: %s\n", i, args[i]);
             
-            /*if (!strcmp(args[i], ">") || !strcmp(args[i], "<")) {
-             rd = 1;
-             }
-             }
-             if (rd) {
-             Redirect(args);
-             rd = 0;
-             } else {
-             commandsNoArgs(args);
-             commandsArgs(args);
-             }*/
-            
+            if (!strcmp(args[i], ">") || !strcmp(args[i], "<")) {
+                rd = 1;
+            }
+            if(!strcmp(args[i], ";") || !strcmp(args[i], "|"))
+            {
+                pip=1;
+            }
         }
-        Piping(args);
+        // Piping(args);
+        if(pip && !rd){
+            Piping(args);
+            
+        }else if(rd &&! pip){
+            Redirect(args);
+        }
+        else {
+            commandsNoArgs(args);
+            commandsArgs(args);
+        }
+        pip=0;
+        rd =0;
+        
     }
+    
 }
