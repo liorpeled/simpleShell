@@ -6,7 +6,7 @@ target:
 	cc -o shell myshell.o lex.yy.o -lfl
 
 infer:
-        make clean; infer-capture -- make; infer-analyze -- make
+	make clean; infer-capture -- make; infer-analyze -- make
 
 clean:
 	rm shell myshell.o lex.yy.o
