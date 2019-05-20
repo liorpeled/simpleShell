@@ -14,7 +14,7 @@ we first wanted to see what is going on in the file, what is the purppous of eac
 Since me and Daniel worked on one part of the assignment and Nithin and Leon worked on another part we all worke on the designed doc understanding what each of us did.  
 
 Ratings:
-Leon: 10/10
+Leon  : 10/10
 Nithin: 10/10
 Daniel: 10/10
 
