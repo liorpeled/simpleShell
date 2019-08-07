@@ -1,0 +1,59 @@
+DESIGN FILE
+
+This design file will walk you step by step  to have a general idea on how to redo the program.
+
+---------
+
+
+Main ()
+1) In order to make a program that exits only when the user wants to, you will need to create a while loop that allways runs  while(1) 
+
+2) inside the while loop, you will need to have a getcommand() function that will bring the array of argumetns each time a command is being entered we will cal    this args.
+   The getcommand() function is related to the lex.l file, that file is incharge of parsing the input for you.
+
+3) the first command you want to check for, and arguably the most important one  is exit, if you read exit, then you should call the systme-call -->  exit(1);
+
+4) In theory, the next command you should be looking for is change directory you can use the system-call chdir();
+
+5) after these commands are checked you would want to look out for special types of command execution; over write a file with an output of command, append a
+   file  with the output of a commmand, use a file as an input, command chaining, and multipiping. they all have a speical symbol, that you can use a for loop 
+   to scan the array, the first special symbol, you encounter indicates which command you will need to execute. some types of commands could be identifed          together, and some can cause some trouble, the redirection type of commands could be group together, how ever, rediction and chaining are risky.      
+
+commandArgs()
+1) when creating the function be sure to include args as a parameter
+2) since we are executing a program - our shell, and we also want to execute a differnt program - the commad, we need to create a child process,using the system
+   call--> fork() <--if that child  process is 0 then we will the the system call execvp(args[0],args), if the process is not 1 we need to wait -
+   meaning it is a parent
+
+redirect()
+1) when createing the function be sure to include args as parameters. 
+2) execvp does not recognize special symbols, there for we need to parse it and extract the commands it can process, basically we need to store all
+   commands that come before the special symbol and store in a temporary args array.
+3) you would either want to dynamically allocate memory to the temporary args array or give it a set size. intialized each cell in the temp array
+   with values from args until we hit a special symbol, once we hit the spcieal symbl would would want to create a child rocess using fork.
+4) instead of excuting it righ away, we need to open a file, this file name comes after the special symbol.  once we open it using the system call 
+   --> open() <-- , inside open it is importatn to remember to give the different flags and user acess premission
+5) we want to close all other input or output depeding on the special symbol  - either > or < (>> is a variation of > and simply needs a differnt flag
+   and access file name is after the last speical symbol >> filename)
+6) we then need to use some varation of dup to duplcate the file descriptor we then close the file and we execute the command in the temporary arguemtn.
+7) be sure to free the memory.
+
+Chaining()
+1) we will need to inlcude args as parameter and create a new temporary argument array
+2) we reate this becuase once again we need to extract every arguemtn in args that is not one of the speical symbols , in this case a semicolon.
+3) in this situation it is better to dynamically allocated memory each iteration in finding the sepcial symbol because we want to access each command - set 
+   of arguements independlty. 
+4) we would add space and value each itteratiion untill a semi colon is detected.
+5) once a semi colon is deteceted we want to execute  the arguments using fork, excevp and wait
+6) we would then free the memory and reallocated from 0 up untill the next semi colon. this wait we can execute each command independetly 
+7) after we execute the last command, we need to veriy that there are no commands left by cecking if the command after the current one is null;
+
+piping()
+1) we will ned to include args in the parameter and create a new temporary arugemtn array
+2) we would scan for the special symbol |
+3) once we find it we need to extract the commands before the symbol and store, this time it is easier to create two separte arrays and allocate them based 
+   on how many pipe symbols there are
+4)  we then need to execute after another, call the left side command - the first command
+5)  we close stdout, we dup, we close the two pipes 
+6) we then do the same for the right side commadn and we close std in instead of std out.
+7) after we excute we ned to close the two pipes.
