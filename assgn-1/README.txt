@@ -1,6 +1,5 @@
-This program is the first assignment in cmps111 spring 2019
 
-It is a simple shell program that uses system calls to execute various different command.
+this is a simple shell program that uses system calls to execute various different command.
 
 To use the shell:
 1) go the directory that contains the files --> Makefile, myshell.c and lex.l
